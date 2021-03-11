@@ -219,7 +219,8 @@ body
 
 4. 配置`webpack-dev-server`
 
-- 安装：`npm i webpack-dev-server`
+- 为什么要使用`webpack-dev-server`：仅仅使用webpack以及它的命令行工具来进行开发调试的效率并不高,每次编写好代码之后，我们需要执行`npm run build`命令更新js文件，然后再刷新页面，才能看到更新效果。`webpack-dev-server`的特点是：令webpack进行模块打包，并处理打包结果的资源请求;作为普通的`Web Server`，处理静态资源文件请求;解决了修改代码之后来回`npm run build`再更新代码的问题，比较便捷;可以设置port端口和open(自动打开页面)。[参考官方文档](https://webpack.js.org/configuration/dev-server/)
+- 安装：`npm i webpack-dev-server --save-dev`，`-save-dev`表示将`webpack-dev-server`保存配置信息到`package.json`的`devDependencies`(开发环境依赖)节点中。这样做是因为`webpack-dev-server`仅仅在本地开发时才会用到，在生产环境中并不需要它。项目上线的时候，要进行依赖安装，就可以通过`npm install--production`过滤掉`devDependencies`中的冗余模块，从而加快安装和发布的速度。
 - 在执行`npm run build`的时候表示的是利用webpack启用项目中配置的`webpack.config.js`文件去打包项目文件，则如果想要使用`webpack-dev-server`，就可以在package.json文件中添加一个script脚本，即：
   ```javascript
   "scripts": {
@@ -256,8 +257,7 @@ body
             host: '0.0.0.0',
             overlay: {
                errors: true
-            },
-            hot: true
+            }
          }
       }
 
@@ -266,9 +266,8 @@ body
       - devServer是在webpack2以后才加入的。
       - `webpack-dev-server`启动，是一个服务，这个服务需要监听一个端口，host设置为`'0.0.0.0'`的原因是可以通过`localhost`进行访问，同时也可以使用本机的内网IP进行访问，如果直接设置成localhost，那么通过内网的ip是访问不了的。使用ip的好处是可以使用别人的电脑访问或者使用手机调试。
       - `overlay`：表示webpack在编译的过程中如果出现任何的错误，都将这个错误显示到网页上面，便于查看
-    - 目前编译的是js和css，没有一个html去容纳这个bundle.js文件，项目是跑不起来的，如何实现？安装一个插件`npm i html-webpack-plugin`。如何使用？
+    - 目前编译的是js和css，没有一个html去容纳这个bundle.js文件，项目是跑不起来的，如何实现？安装一个插件`npm i html-webpack-plugin`。如何使用？在webpack配置文件中引入，然后设置plugins插件:
 
-      在webpack配置文件中引入，然后设置plugins插件:
       ```javascript
       const HTMLPlugin = require('html-webpack-plugin')
 
@@ -293,5 +292,46 @@ body
          ]
       }
       ```
-      在使用vue的时候一定需要使用到webpack的DefinePlugin，它是给webpack在编译的过程中以及自己写的JS代码的时候，判断环境都可以调用`process.env.NODE_ENV`进行判断，也就是说在这里定义之后，在JS代码中是可以引用的。此外，vue会根据不同的环境区分打包，vue的dist文件中会有很多不同版本的vue源代码，在开发环境下是一个比较大的版本，里面会包含很多的错误信息的提示信息以及很多的功能。这些功能在正式环境下是不希望被使用的，因为他会加大文件的大小，会降低整个代码的运行效率，在开发环境下使用development有很多好处，可以得到在渲染时候的一些错误提醒。注意：里面的双引号要写！
+      在使用vue的时候一定需要使用到webpack的DefinePlugin，它是给webpack在编译的过程中以及自己写的JS代码的时候，判断环境都可以调用`process.env.NODE_ENV`进行判断，也就是说在这里定义之后，在JS代码中是可以引用的。此外，vue会根据不同的环境区分打包，vue的dist文件中会有很多不同版本的vue源代码，在开发环境下是一个比较大的版本，里面会包含很多的错误信息的提示信息以及很多的功能。这些功能在正式环境下是不希望被使用的，因为他会加大文件的大小，会降低整个代码的运行效率，在开发环境下使用development有很多好处，可以得到在渲染时候的一些错误提醒。注意：里面的双引号要写！至此，就可以在终端运行`npm run dev`，然后访问`localhost:8000`页面了，可以看到一个浏览器渲染出来的正常页面。
+
+      但是会发现，之前打包好的dist目录，使用`webpack-dev-server`进行实时打包时，并没有生成打包之后的dist文件，更找不到bundle.js，但是可以正常访问页面，这是因为`webpack-dev-server`将打包好的文件放在了内存中了，由于需要实时打包编译，所以放在内存中速度会非常快。
+
+     - devServer中的其他配置项：
+         ```javascript
+         if (isDev) {
+            config.devServer = {
+               port: 8000,
+               host: '0.0.0.0',
+               overlay: {
+                  errors: true
+               },
+               open: true,
+               historyFallback: {},
+               hot: true
+            }
+         }
+         ```
+         - `open: true`：表示在`webpack-dev-server`的时候会自动打开浏览器，这样很方便，但是也会有一些问题，比如在修改webpack一些配置的时候每次都会打开一个新的页面，这样就会很繁琐。
+         - `historyFallback`：因为做的是单页应用，单页应用会做很多的前端路由，页面请求进来的地址不一定就是默认的这个`index.html`。`historyFallback`能够把`webpack-dev-server`本身不理解的这些地址，没有做映射的这些地址都映射到入口`index.html`上面。
+         - `hot: true`：热加载，在开发单页应用的时候，页面上会有很多的数据，如果每次一改代码，整个页面就刷新了，就会导致页面上的数据需要重新刷新一遍才会回来，所以hot的功能就是，在修改了一个组件的代码的时候，只会重新渲染当前这个组件的一个效果，而不会让整个页面都重新加载。要想启用热加载功能，需要使用一个插件:
+            ```javascript
+            if (isDev) {
+               config.devtool = '#cheap-module-eval-source',
+               config.devServer = {
+                  port: 8000,
+                  host: '0.0.0.0',
+                  overlay: {
+                     errors: true
+                  },
+                  hot: true
+               },
+               config.plugins.push(
+                  new webpack.HotModuleReplacementPlugin(),
+                  new webpack.NoEmitOnErrorsPlugin()  // 这个插件不是必须的，但是他会帮我们减少一些不需要的信息的展示
+               )
+            }
+            ```
+            - `new webpack.HotModuleReplacementPlugin()`: 启动热加载功能的插件，其实在页面上还需要写一些处理热加载过来的代码，具体要怎么处理是自己去定义的，但是因为使用的时vue进行开发，都是vue组件的开发模式，这些模式使用vue-loader自动加载模块的功能，这些功能已经有了，服务器重新启动，热加载的功能已经加入了
+            - `config.devtool = '#cheap-module-eval-source'`：这个配置是在页面上调试代码的，因为使用的是`.vue`文件的开发模式的，写的都是ES6的代码，这些代码在浏览器中是无法直接运行的，所以如果直接调试浏览器中的代码，代码都是经过编译的，可能都读不懂，使用的方式就是使用`source map`进行代码的映射，这样的话，打开的就是我们自己写的代码的样子,  可以很快的进行错误定位。这个配置比较长，因为可能会有很多不同的`source map`的映射方式，  `source map`可以更完整的映射代码和编译之后的代码之间的关系，但是它的效率比较低，文件也是很大的，所以会导致webpack的编译也会比较慢，在页面上进行调试也会比较慢，如果使用`eval`的话，就会让代码看起来比较乱，代码对应补齐，找错误不好定位,官方提供的这个配置， 效率比较高，准确性也是比较高。
+            - 修改配置之后，重启。(`npm run dev`)
    
