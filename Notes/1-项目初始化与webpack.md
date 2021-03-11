@@ -335,3 +335,49 @@ body
             - `config.devtool = '#cheap-module-eval-source'`：这个配置是在页面上调试代码的，因为使用的是`.vue`文件的开发模式的，写的都是ES6的代码，这些代码在浏览器中是无法直接运行的，所以如果直接调试浏览器中的代码，代码都是经过编译的，可能都读不懂，使用的方式就是使用`source map`进行代码的映射，这样的话，打开的就是我们自己写的代码的样子,  可以很快的进行错误定位。这个配置比较长，因为可能会有很多不同的`source map`的映射方式，  `source map`可以更完整的映射代码和编译之后的代码之间的关系，但是它的效率比较低，文件也是很大的，所以会导致webpack的编译也会比较慢，在页面上进行调试也会比较慢，如果使用`eval`的话，就会让代码看起来比较乱，代码对应补齐，找错误不好定位,官方提供的这个配置， 效率比较高，准确性也是比较高。
             - 修改配置之后，重启。(`npm run dev`)
    
+5. 其他相关配置
+
+- 安装：`npm i postcss-loader autoprefixer babel-loader babel-core`
+- 根目录下创建配置文件`postcss.config.js`
+   ```javascript
+   const autoprefixer = require('autoprefixer')
+
+   module.exports = {
+      plugins: [
+         autoprefixer()
+      ]
+   }
+   ```
+   postcss是用来后处理css的，stylus文件编译成css之后再通过postcss去优化css代码，优化的过程就通过一系列的组件完成，其中使用到的就是`autoprefixer`，它是用来自动添加浏览器前缀的。
+- 根目录下创建配置文件`.babelrc`
+  ```javascript
+   {
+      "presets": [
+         "@babel/preset-env"
+      ],
+      "plugins": [
+         "transform-vue-jsx",   // 这个插件是专门帮我们转换vue中的jsx代码的，  使用这两个包需要先npm
+         "syntax-dynamic-import"
+      ]
+   }
+   ```
+   babel是用来演示vue的render方法的，vue也可以支持写jsx代码。
+- 完成上述配置之后需要再webpack配置文件中引入加载.jsx代码的`babel-loader`
+- 然后给.styl加一个加载配置，即：
+  ```javascript
+   {
+      test: /\.styl$/,
+      use: [
+         'style-loader',
+         'css-loader',
+         {
+            loader: 'postcss-loader',
+            options: {
+               sourceMap: true
+            }
+         },
+         'stylus-loader'
+      ]
+   }
+   ```
+   `sourceMap`配置项：使用`stylus-loader`会自动生成`sourceMap`，`postcss-loader`自己也会生成`sourceMap`，当前面有一个处理器已经生成了`sourceMap`之后，postcss就可以设置使用前面生成的这个`sourceMap`，这样编译的效率就会比较高，这是既定的用法，官方文档会有说明。(在安装过程中出现一些warning，根据提示一步步安装即可)
