@@ -1,19 +1,15 @@
 <template>
-  <div class="app">
-    <Todo></Todo>
+  <div>
+    item
   </div>
 </template>
 
 <script>
-import Todo from './views/TODO.vue'
-
 export default {
-  components: {
-    Todo,
-  }
+  
 }
 </script>
 
 <style lang="scss" scoped>
-
+  
 </style>

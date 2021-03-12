@@ -16,23 +16,16 @@ const config = {
     rules: [
       {
         test: /\.vue$/,
-        loader: ['vue-loader']
+        use: ['vue-loader']
       },
       {
         test: /\.jsx$/,
         loader: ['babel-loader']
       },
       {
-        test: /\.css$/,
-        use: [
-          "style-loader",
-          "css-loader"
-        ]
-      },
-      {
         test: /\.(png|gif|jpg|jpeg|svg)$/,
         use: [{
-          loader: "url-loader",
+          loader: 'url-loader',
           options: {
             limit: 1024, 
             name: "[name].[ext]" 
@@ -40,17 +33,16 @@ const config = {
         }]
       },
       {
-        test: /\.styl$/,
+        test: /\.(css|scss|sass)$/,
         use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'postcss-loader',
+          { loader: 'style-loader' },  // 将 JS 字符串生成为 style 节点 
+          { loader: 'css-loader' },   // 将 CSS 转化成 CommonJS 模块
+          { 
+            loader: 'sass-loader',  // 将 Sass 编译成 CSS
             options: {
-              sourceMap: true
+              implementation: require('dart-sass')
             }
-          },
-          'stylus-loader'
+          }   
         ]
       }
     ]
