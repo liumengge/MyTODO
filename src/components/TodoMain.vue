@@ -9,12 +9,18 @@
       @keydown.enter="handleAddTodoList"
     >
     <todo-list
-      v-for="(item, index) in todoLists"
+      v-for="(item, index) in filteredTodoLists"
       :key="item.id"
       :todoList="item" 
       :index="index"
+      @delete="deleteTodoList"
     ></todo-list>
-    <tabs></tabs>
+    <tabs
+      :todoLists="todoLists"
+      :show="show"
+      @handleShow="handleShow"
+      @handleDeleteCompleted="handleDeleteCompleted"
+    ></tabs>
   </div>
 </template>
 
@@ -32,22 +38,25 @@ export default {
   data() {
     return {
       todoLists: [
-        {
-          id: 0,
-          done: true,
-          value: 'Eating'
-        },
-        {
-          id: 1,
-          done: true,
-          value: 'Coding'
-        },
-        {
-          id: 2,
-          done: false,
-          value: 'Sleeping'
-        }
+        // {
+        //   id: 0,
+        //   done: true,
+        //   value: 'Eating'
+        // },
+        // {
+        //   id: 1,
+        //   done: true,
+        //   value: 'Coding'
+        // }
       ],
+      show: 'All'
+    }
+  },
+  computed: {
+    filteredTodoLists() {
+      if (this.show === 'All') return this.todoLists
+      const done = this.show === 'Done'
+      return this.todoLists.filter(todoList => done === todoList.done)
     }
   },
   methods: {
@@ -58,11 +67,17 @@ export default {
         done: false
       })
       this.$refs.txt.value = ''
+    },
+    deleteTodoList(idx) {
+      this.todoLists.splice(idx, 1)
+    },
+    handleShow(state) {
+      this.show = state
+    },
+    handleDeleteCompleted() {
+      this.todoLists = this.todoLists.filter(todoList => !todoList.done)
     }
   },
-  handleDelete(index) {
-    console.log(index)
-  }
 }
 </script>
 

@@ -8,8 +8,7 @@
 .header {
   text-align: center;
   h1 {
-    color: rgb(175, 39, 238);
-    opacity: 0.6;
+    color: rgba(243, 75, 75, 0.8);
     font-size: 100px;
     font-family: 'Times New Roman', Times, serif;
     font-weight: 400;

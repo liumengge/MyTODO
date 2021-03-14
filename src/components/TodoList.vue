@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     handleDelete(index) {
-      console.log(index)
+      this.$emit('delete', index)
     }
   }
 }
@@ -30,6 +30,7 @@ export default {
     position: relative;
     background-color: #fff;
     &:hover {
+      background-color: #ddd;
       cursor: pointer;
       .delete::after {
         content: 'x';
@@ -62,6 +63,7 @@ export default {
       margin: auto 0;
       appearance: none;
       outline: none;
+      cursor: pointer;
       &::after {
         content: url('../assets/images/unChecked.svg');
       }
