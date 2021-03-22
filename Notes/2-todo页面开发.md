@@ -2,6 +2,7 @@
 - [TODO页面开发](#todo页面开发)
   - [TodoMain.vue](#todomainvue)
   - [Tabs.vue](#tabsvue)
+- [路由配置](#路由配置)
   - [mock数据模拟后端接口](#mock数据模拟后端接口)
 
 ## 项目目录结构
@@ -62,6 +63,51 @@ Tabs组件中的数据是与其父组件TodoMain.vue中事件项的显示状态�
 - 父组件TodoMain.vue设置一个展示变量show，用来指定当前是需要显示全部的事件项(All)，未完成的事件项(NeedToDo)还是已经完成的事件项(Done),父组件以属性的方式将展示状态传递给子组件Tabs.vue
 - 在子组件Tabs.vue中，根据从父组件接收的show来设置动态class以显示不同的样式，点击某个状态的按钮时通过$emit告知父组件需要显示的哪一组事件项，父组件通过@handleshow接收该事件去调整当前需要显示的事件项
 - 同样的，点击delete按钮时，子组件通知父组件将所有完成的事件项删除
+
+
+## 路由配置
+
+
+1. 路由表项设置
+
+路径 | 请求方式 | 功能
+---------|----------|---------
+ `/` | GET | 重定向到`/allTodo`，即todoList主页，获取全部需要做的事件项并展示在当前页面
+ `/allTodo` | GET | 点击All按钮时发起该请求，获取全部需要做的事件项并展示在当前页面
+ `/needTodo` | GET | 获取所有未完成的事件项并显示在当前页面
+ `/done` | GET | 获取所有已经完成的事件项并显示在当前页面
+ `/delete` | GET | 删除该用户所有已经完成的事件项
+ `/addTodoList` | POST | 向该用户的事件数据库中添加一项需要完成的事件，状态为0
+
+2. 配置路由表
+  - `npm install vue-router`
+  - 创建路由配置文件：`router/router.js`
+  - 在router.js中引入需匹配的页面组件，并注册使用：
+    ```javascript
+    import Vue from 'vue'
+    import Router from 'vue-router'
+    // 导入需要展示的组件
+    import TodoList from '../views/Todo/TODO.vue'
+
+    Vue.use(Router)
+
+    export default new Router({
+      routes: [
+        {
+          path: '/',
+          redirect: '/allTodo'
+        },
+        {
+          path: '/allTodo',
+          name: 'TodoList',
+          component: TodoList
+        }
+      ]
+    })
+    ```
+  - 项目入口文件index.js中挂载路由
+  - app.vue中使用`<router-view></router-view>`来显示页面
+
 
 ### mock数据模拟后端接口
 

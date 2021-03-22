@@ -37,19 +37,7 @@ export default {
   },
   methods: {
     handleShow(state) {
-      // this.$emit('handleShow', state)
-      this.$ajax({
-                  url: '/allTodo',
-                  params: {
-                      show: this.show
-                  }
-                })
-                .then(res => {
-                  console.log(res)
-                })
-                .catch(error => {
-                  console.log(error)
-                })
+      this.$emit('handleShow', state)
     },
     handleDeleteCompleted() {
       this.$emit('handleDeleteCompleted')

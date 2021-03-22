@@ -9,7 +9,7 @@
       @keydown.enter="handleAddTodoList"
     >
     <todo-list
-      v-for="(item, index) in filteredTodoLists"
+      v-for="(item, index) in todoLists"
       :key="item.id"
       :todoList="item" 
       :index="index"
@@ -46,23 +46,23 @@ export default {
             this.todoLists = res.data.data
         })
         .catch((err)=>{
-          this.$message.error(err)
+          this.$message.error('这是一条错误消息');
         })
-  },
-  computed: {
-    filteredTodoLists() {
-      if (this.show === 'All') return this.todoLists
-      const done = this.show === 'Done'
-      return this.todoLists.filter(todoList => done === todoList.done)
-    }
   },
   methods: {
     handleAddTodoList() {
-      this.todoLists.push({
-        id: id++,
-        value: this.$refs.txt.value,
-        done: false
-      })
+      this.$router.push({ path: '/addTodoList' })
+        .catch(err => {
+          console.log(err)
+        })   
+      this.$ajax('/addTodoList')
+        .then((res)=>{
+            console.log(res)
+            this.todoLists = res.data.data
+        })
+        .catch((err)=>{
+          this.$message.error('错了哦，这是一条错误消息');
+        })
       this.$refs.txt.value = ''
     },
     deleteTodoList(idx) {
@@ -70,9 +70,60 @@ export default {
     },
     handleShow(state) {
       this.show = state
+      if (state === 'All') {
+        this.$ajax({
+          url: '/allTodo',
+          params: {
+              show: this.show
+          }
+        })
+        .then(res => {
+          this.todoLists = res.data.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      } else if (state === 'NeedToDo') {
+        this.$ajax({
+          url: '/needTodo',
+          params: {
+              show: this.show
+          }
+        })
+        .then(res => {
+          this.todoLists = res.data.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      }else {
+        this.$ajax({
+          url: '/done',
+          params: {
+              show: this.show
+          }
+        })
+        .then(res => {
+          this.todoLists = res.data.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      }
     },
     handleDeleteCompleted() {
-      this.todoLists = this.todoLists.filter(todoList => !todoList.done)
+      this.$ajax({
+          url: '/delete',
+          params: {
+              show: this.show
+          }
+        })
+        .then(res => {
+          this.todoLists = res.data.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
 }
