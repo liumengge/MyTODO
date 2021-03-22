@@ -27,6 +27,7 @@
 <script>
 import TodoList from './TodoList.vue'
 import Tabs from './Tabs.vue'
+// import axios from 'axios'
 
 let id = 0
 
@@ -51,6 +52,15 @@ export default {
       ],
       show: 'All'
     }
+  },
+  mounted() {
+    this.$ajax('/api/foodList')
+        .then((res)=>{
+            console.log(res,'响应')
+        })
+        .catch((err)=>{
+
+        })
   },
   computed: {
     filteredTodoLists() {
