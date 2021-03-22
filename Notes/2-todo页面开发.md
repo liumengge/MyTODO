@@ -64,3 +64,101 @@ Tabs组件中的数据是与其父组件TodoMain.vue中事件项的显示状态�
 - 同样的，点击delete按钮时，子组件通知父组件将所有完成的事件项删除
 
 ### mock数据模拟后端接口
+
+- 安装mockjs: `npm install mockjs`
+- 生成模拟数据：
+
+  ```javascript
+  Mock.mock( rurl?, rtype?, template ) )
+  ```
+  表示当拦截到rurl和rtype的ajax请求时，将根据数据模板template生成模拟数据，并作为响应数据返回。其中：
+  - rurl 可选，表示要拦截的url，可以使字符串，也可以是正则
+  - rtype 可选，表示要拦截的ajax请求方式，如get、post
+  - template 可选，数据模板，可以是对象也可以是字符串
+
+或者
+```javascript
+Mock.mock( rurl, rtype, function(options){} )
+```
+  - function(option){} 可选，表示用于生成响应数据的函数
+
+在该项目中，直接注册所有的mock服务。
+
+1. 在mock文件夹下创建index.js文件，这就是注册所有mock服务的地方
+
+```javascript
+const Mock = require('mockjs')
+
+Mock.setup({
+  timeout: '200-600'
+})
+
+let configArr = []
+
+// 使用webpack的require.context()遍历所有mock文件
+const files = require.context('.', true, /\.js$/);
+files.keys().forEach((key) => {
+  if (key === './index.js') return;
+  configArray = configArray.concat(files(key).default);
+});
+
+// 注册所有的mock服务
+configArray.forEach((item) => {
+  for (let [path, target] of Object.entries(item)) {
+    let protocol = path.split('|');
+    Mock.mock(new RegExp('^' + protocol[1]), protocol[0], target);
+  }
+});
+```
+
+服务注册好后，在项目入口index.js中引入：`require('./mock')`
+
+在mock文件夹下新建一个allTodo.js文件，按照index注册服务的格式来写mock，比如：
+```javascript
+let allTodoList = [{
+        id: 0,
+        done: 1,
+        value: '写完todoList项目'
+    },{
+        id: 0,
+        done: 1,
+        value: '学习vue2底层源码'
+    },{
+        id: 0,
+        done: 0,
+        value: '学习TS'
+    }]
+
+export default {
+    'get|/allTodo':  option => {
+    return {
+      status: 200,
+      message: 'success',
+      data: allTodoList
+    };
+  }
+}
+```
+表示的是在页面发起了ajax请求，路径是'/allTodo'，并且请求方式是get时，就会返回写好的mock数据。
+
+此外，当想要展示大量数据时，不可能一个一个的写，可以根据mockjs的语法规范来快速生成一系列的数据，比如：
+```javascript
+let demoList = {
+  status: 200,
+  message: 'success',
+  data: {
+    total: 100,
+    'rows|10': [{
+      id: '@guid',
+      name: '@cname',
+      'age|20-30': 23,
+      'job|1': ['前端工程师', '后端工程师', 'UI工程师', '需求工程师']
+    }]
+  }
+};
+export default {
+    'get|/parameter/query': demoList
+}
+```
+
+这样就可以每次随机生成10条数据，总数为100条，其中id和name使用的占位符，age是随机取出20-30中的数字，job是随机取出其后数组中的某一项，这在[mockjs](http://mockjs.com/examples.html)或者[mock文档](https://github.com/nuysoft/Mock/wiki/Syntax-Specification)里都有说明。
