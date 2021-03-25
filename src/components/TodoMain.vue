@@ -9,10 +9,10 @@
       @keydown.enter="handleAddTodoList"
     >
     <todo-list
-      v-for="(item, index) in todoLists"
+      v-for="(item) in todoLists"
       :key="item.id"
       :todoList="item" 
-      :index="index"
+      :index="item.id"
       @delete="deleteTodoList"
     ></todo-list>
     <tabs
@@ -40,89 +40,92 @@ export default {
     }
   },
   mounted() {
-    this.$ajax('/allTodo')
-        .then((res)=>{
-            console.log(res)
-            this.todoLists = res.data.data
-        })
-        .catch((err)=>{
-          this.$message.error('这是一条错误消息');
-        })
+    this.$ajax('/api/tasks')
+      .then((res)=>{
+          // console.log(res)
+          this.todoLists = res.data.tasks
+      })
+      .catch((err)=>{
+        this.$message.error(err.message || '系统出错了...');
+      })
   },
   methods: {
-    handleAddTodoList() {
-      this.$router.push({ path: '/addTodoList' })
-        .catch(err => {
-          console.log(err)
-        })   
-      this.$ajax('/addTodoList')
-        .then((res)=>{
-            console.log(res)
-            this.todoLists = res.data.data
-        })
-        .catch((err)=>{
-          this.$message.error('错了哦，这是一条错误消息');
-        })
+    handleAddTodoList() {  
+      this.$ajax.post('/api/tasks', {
+        "value": this.$refs.txt.value,
+        "done": "0"
+      })
+      .then((res)=>{
+        this.todoLists = res.data.tasks
+      })
+      .catch((err)=>{
+        this.$message.error('错了哦，这是一条错误消息');
+      })
       this.$refs.txt.value = ''
     },
     deleteTodoList(idx) {
-      this.todoLists.splice(idx, 1)
+      this.$ajax.delete("/api/tasks/"+idx)
+        .then((res) => {
+          this.todoLists = res.data.tasks
+          console.log(res.data.msg)
+          this.$message({
+            message: res.data.msg,
+            type: 'success'
+          })
+      }).catch((err) => {
+        this.$message.error(err.message || '系统出错啦！')
+      })
     },
     handleShow(state) {
       this.show = state
-      if (state === 'All') {
+      if(state === 'All') {
+        this.$ajax('/api/tasks')
+        .then(res => {
+          this.todoLists = res.data.tasks
+        })
+        .catch(error => {
+          this.$message.error(error.message || '出错啦！')
+        })
+      }else if (state === 'NeedToDo') {
         this.$ajax({
-          url: '/allTodo',
+          url: '/api/tasks',
           params: {
-              show: this.show
+            done: "0"
           }
         })
         .then(res => {
-          this.todoLists = res.data.data
+          this.todoLists = res.data.tasks
         })
         .catch(error => {
-          console.log(error)
-        })
-      } else if (state === 'NeedToDo') {
-        this.$ajax({
-          url: '/needTodo',
-          params: {
-              show: this.show
-          }
-        })
-        .then(res => {
-          this.todoLists = res.data.data
-        })
-        .catch(error => {
-          console.log(error)
+          this.$message.error(error.message || '出错啦！')
         })
       }else {
         this.$ajax({
-          url: '/done',
+          url: '/api/tasks',
           params: {
-              show: this.show
+              done: "1"
           }
         })
         .then(res => {
-          this.todoLists = res.data.data
+          this.todoLists = res.data.tasks
         })
         .catch(error => {
-          console.log(error)
+          this.$message.error(error.message || '出错啦！')
         })
       }
     },
     handleDeleteCompleted() {
       this.$ajax({
-          url: '/delete',
+          url: '/api/tasks',
           params: {
-              show: this.show
+            done: "1"
           }
         })
         .then(res => {
-          this.todoLists = res.data.data
+          this.todoLists = res.data.tasks
         })
         .catch(error => {
-          console.log(error)
+          this.$message.error(error.message || '出错啦！')
         })
     }
   },

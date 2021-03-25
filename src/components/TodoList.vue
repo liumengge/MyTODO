@@ -1,8 +1,8 @@
 <template>
   <div 
-    :class="['item-box', todoList.done ? 'done' : '']"
+    :class="['item-box', todoList.done == 1 ? 'done' : '']"
   >
-    <input class="check" type="checkbox" v-model="todoList.done">
+    <input class="check" type="checkbox" v-model="todoList.done == 1">
     <label>{{ todoList.value }}</label>
     <button class="delete" @click="handleDelete(index)"></button>
   </div>

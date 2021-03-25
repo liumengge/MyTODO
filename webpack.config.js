@@ -70,7 +70,7 @@ if (isDev) {
     proxy: {
       '/':{ 
         //'/api' 地址是自己定义的
-        target:'http://localhost:3000',  //你要解决跨域的地址
+        target:'http://localhost:3000',  //要解决跨域的地址
         changeOrigin:true,  //在本地搭建一个虚拟服务，去发送种请求拦截服务
         pathRewrite:{  //地址重写
           '^/api': ''
