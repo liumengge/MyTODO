@@ -32,10 +32,6 @@ export default {
       this.$emit('handleChange', this.id, this.done)      
     },
   },
-  mounted() {
-    console.log(this.todoList.id)
-    console.log(this.todoList.done)
-  }
 }
 </script>
 

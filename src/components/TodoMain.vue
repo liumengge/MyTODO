@@ -8,14 +8,16 @@
       placeholder="Please enter your plan"
       @keydown.enter="handleAddTodoList"
     >
-    <todo-list
-      v-for="(item) in todoLists"
-      :key="item.id"
-      :todoList="item" 
-      :index="item.id"
-      @handleChange="handleChange(arguments)"
-      @delete="deleteTodoList"
-    ></todo-list>
+    <div class="sc">
+      <todo-list
+        v-for="(item) in todoLists"
+        :key="item.id"
+        :todoList="item" 
+        :index="item.id"
+        @handleChange="handleChange(arguments)"
+        @delete="deleteTodoList"
+      ></todo-list>
+    </div>
     <tabs
       :todoLists="todoLists"
       :show="show"
@@ -67,10 +69,6 @@ export default {
       this.$ajax.delete("/api/tasks/"+idx)
         .then((res) => {
           this.todoLists = res.data.tasks
-          this.$message({
-            message: res.data.msg,
-            type: 'success'
-          })
       }).catch((err) => {
         this.$message.error(err.message || '系统出错啦！')
       })
@@ -114,14 +112,10 @@ export default {
       }
     },
     handleDeleteCompleted() {
-      this.$ajax({
-          url: '/api/tasks',
-          params: {
-            done: 1
-          }
-        })
+      this.$ajax.delete('/api/tasks')
         .then(res => {
           this.todoLists = res.data.tasks
+          this.show = 'All'
         })
         .catch(error => {
           this.$message.error(error.message || '出错啦！')
@@ -145,6 +139,10 @@ export default {
   .todo-box {
     width: 800px;
     margin: 0 auto;
+    .sc {
+      max-height: 260px;
+      overflow: auto;
+    }
     .txt {
       width: 100%;
       box-sizing: border-box;

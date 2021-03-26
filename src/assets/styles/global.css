@@ -9,6 +9,7 @@ body {
   background-image: url("../images/pic-F.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   font: 14px;
   font-weight: 300;
 }
