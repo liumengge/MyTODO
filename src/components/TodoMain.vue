@@ -13,6 +13,7 @@
       :key="item.id"
       :todoList="item" 
       :index="item.id"
+      @handleChange="handleChange(arguments)"
       @delete="deleteTodoList"
     ></todo-list>
     <tabs
@@ -42,8 +43,7 @@ export default {
   mounted() {
     this.$ajax('/api/tasks')
       .then((res)=>{
-          // console.log(res)
-          this.todoLists = res.data.tasks
+        this.todoLists = res.data.tasks
       })
       .catch((err)=>{
         this.$message.error(err.message || '系统出错了...');
@@ -53,7 +53,7 @@ export default {
     handleAddTodoList() {  
       this.$ajax.post('/api/tasks', {
         "value": this.$refs.txt.value,
-        "done": "0"
+        "done": 0
       })
       .then((res)=>{
         this.todoLists = res.data.tasks
@@ -64,12 +64,9 @@ export default {
       this.$refs.txt.value = ''
     },
     deleteTodoList(idx) {
-      // console.log(idx)
       this.$ajax.delete("/api/tasks/"+idx)
         .then((res) => {
           this.todoLists = res.data.tasks
-          // console.log(res.data.tasks)
-          // console.log(res.data.msg)
           this.$message({
             message: res.data.msg,
             type: 'success'
@@ -92,7 +89,7 @@ export default {
         this.$ajax({
           url: '/api/tasks',
           params: {
-            done: "0"
+            done: 0
           }
         })
         .then(res => {
@@ -105,7 +102,7 @@ export default {
         this.$ajax({
           url: '/api/tasks',
           params: {
-              done: "1"
+              done: 1
           }
         })
         .then(res => {
@@ -120,7 +117,7 @@ export default {
       this.$ajax({
           url: '/api/tasks',
           params: {
-            done: "1"
+            done: 1
           }
         })
         .then(res => {
@@ -129,6 +126,16 @@ export default {
         .catch(error => {
           this.$message.error(error.message || '出错啦！')
         })
+    },
+    handleChange(arg) {
+      this.$ajax.post('/api/tasks', {
+        "id": arg[0],
+        "done": arg[1]
+      }).then((res) => {
+        this.todoLists = res.data.tasks
+      }).catch((err) => {
+        this.$message.error(error.message || '出错啦！')
+      })
     }
   },
 }

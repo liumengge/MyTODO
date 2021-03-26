@@ -2,7 +2,7 @@
   <div 
     :class="['item-box', todoList.done ? 'done' : '']"
   >
-    <input class="check" type="checkbox" v-model="todoList.done">
+    <input class="check" type="checkbox" v-model="todoList.done" @change="handleChange">
     <label>{{ todoList.value }}</label>
     <button class="delete" @click="handleDelete(index)"></button>
   </div>
@@ -17,10 +17,24 @@ export default {
     },
     index: Number
   },
+  data() {
+    return {
+      id: this.todoList.id,
+      done: this.todoList.done
+    }
+  },
   methods: {
     handleDelete(index) {
       this.$emit('delete', index)
-    }
+    },
+    handleChange() {
+      this.todoList.done ? this.done = 1 : this.done = 0
+      this.$emit('handleChange', this.id, this.done)      
+    },
+  },
+  mounted() {
+    console.log(this.todoList.id)
+    console.log(this.todoList.done)
   }
 }
 </script>
