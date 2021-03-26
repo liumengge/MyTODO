@@ -6,7 +6,7 @@ import router from './router/router.js'
 require('../mock')
 import { Message } from 'element-ui'
 
-// Vue.use(Message)
+Vue.use(Message)
 Vue.prototype.$message = Message
 
 Vue.prototype.$ajax = axios

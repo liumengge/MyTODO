@@ -64,10 +64,12 @@ export default {
       this.$refs.txt.value = ''
     },
     deleteTodoList(idx) {
+      // console.log(idx)
       this.$ajax.delete("/api/tasks/"+idx)
         .then((res) => {
           this.todoLists = res.data.tasks
-          console.log(res.data.msg)
+          // console.log(res.data.tasks)
+          // console.log(res.data.msg)
           this.$message({
             message: res.data.msg,
             type: 'success'
