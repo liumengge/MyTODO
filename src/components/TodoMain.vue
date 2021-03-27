@@ -130,6 +130,7 @@ export default {
       }).catch((err) => {
         this.$message.error(error.message || '出错啦！')
       })
+      this.show = 'All'
     }
   },
 }
