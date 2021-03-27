@@ -43,7 +43,7 @@ export default {
     }
   },
   mounted() {
-    this.$ajax('/api/tasks')
+    this.$ajax('/tasks')
       .then((res)=>{
         this.todoLists = res.data.tasks
       })
@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     handleAddTodoList() {  
-      this.$ajax.post('/api/tasks', {
+      this.$ajax.post('/tasks', {
         "value": this.$refs.txt.value,
         "done": 0
       })
@@ -66,7 +66,7 @@ export default {
       this.$refs.txt.value = ''
     },
     deleteTodoList(idx) {
-      this.$ajax.delete("/api/tasks/"+idx)
+      this.$ajax.delete("/tasks/"+idx)
         .then((res) => {
           this.todoLists = res.data.tasks
       }).catch((err) => {
@@ -76,7 +76,7 @@ export default {
     handleShow(state) {
       this.show = state
       if(state === 'All') {
-        this.$ajax('/api/tasks')
+        this.$ajax('/tasks')
         .then(res => {
           this.todoLists = res.data.tasks
         })
@@ -85,7 +85,7 @@ export default {
         })
       }else if (state === 'NeedToDo') {
         this.$ajax({
-          url: '/api/tasks',
+          url: '/tasks',
           params: {
             done: 0
           }
@@ -98,7 +98,7 @@ export default {
         })
       }else {
         this.$ajax({
-          url: '/api/tasks',
+          url: '/tasks',
           params: {
               done: 1
           }
@@ -112,7 +112,7 @@ export default {
       }
     },
     handleDeleteCompleted() {
-      this.$ajax.delete('/api/tasks')
+      this.$ajax.delete('/tasks')
         .then(res => {
           this.todoLists = res.data.tasks
           this.show = 'All'
@@ -122,7 +122,7 @@ export default {
         })
     },
     handleChange(arg) {
-      this.$ajax.post('/api/tasks', {
+      this.$ajax.post('/tasks', {
         "id": arg[0],
         "done": arg[1]
       }).then((res) => {
