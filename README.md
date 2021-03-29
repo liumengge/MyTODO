@@ -49,3 +49,7 @@ npm run serve
 // 设置数据库连接配置 - config/config.json
 // 将data下的sql文件导入到数据库
 ```
+
+- 打开浏览器请求：`http://localhost:8000`
+
+补：现已将打包好的前端代码放在todoServer服务中，也可以启动后端服务后打开浏览器请求本地的3000端口也是一样的。
