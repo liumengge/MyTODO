@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     unReachedNum() {
-      return this.todoLists.filter(todoList => !Number(todoList.done)).length
+      return this.todoLists.filter(todoItem => !Number(todoItem.done)).length
     }
   },
   methods: {

@@ -6,17 +6,17 @@
       ref="txt" 
       type="text" 
       placeholder="Please enter your plan"
-      @keydown.enter="handleAddTodoList"
+      @keydown.enter="handleAddTodoItem"
     >
     <div class="sc">
-      <todo-list
+      <todo-item
         v-for="(item) in todoLists"
         :key="item.id"
-        :todoList="item" 
+        :todoItem="item" 
         :index="item.id"
         @handleChange="handleChange(arguments)"
-        @delete="deleteTodoList"
-      ></todo-list>
+        @delete="deleteTodoItem"
+      ></todo-item>
     </div>
     <tabs
       :todoLists="todoLists"
@@ -28,18 +28,18 @@
 </template>
 
 <script>
-import TodoList from './TodoList.vue'
+import TodoItem from './TodoItem.vue'
 import Tabs from './Tabs.vue'
 
 export default {
   components: {
-    TodoList,
+    TodoItem,
     Tabs
   },
   data() {
     return {
       todoLists: [],
-      show: 'All'
+      show: 'All'  // 显示状态
     }
   },
   mounted() {
@@ -52,7 +52,7 @@ export default {
       })
   },
   methods: {
-    handleAddTodoList() {  
+    handleAddTodoItem() {  // 添加一项新的任务
       this.$ajax.post('/tasks', {
         "value": this.$refs.txt.value,
         "done": 0
@@ -65,7 +65,7 @@ export default {
       })
       this.$refs.txt.value = ''
     },
-    deleteTodoList(idx) {
+    deleteTodoItem(idx) {  // 删除id为idx的任务项
       this.$ajax.delete("/tasks/"+idx)
         .then((res) => {
           this.todoLists = res.data.tasks
@@ -111,7 +111,7 @@ export default {
         })
       }
     },
-    handleDeleteCompleted() {
+    handleDeleteCompleted() {  // 删除所有已完成项
       this.$ajax.delete('/tasks')
         .then(res => {
           this.todoLists = res.data.tasks
@@ -127,7 +127,7 @@ export default {
         "done": arg[1]
       }).then((res) => {
         this.todoLists = res.data.tasks
-      }).catch((err) => {
+      }).catch((error) => {
         this.$message.error(error.message || '出错啦！')
       })
       this.show = 'All'

@@ -1,35 +1,29 @@
 <template>
   <div 
-    :class="['item-box', todoList.done ? 'done' : '']"
+    :class="['item-box', todoItem.done ? 'done' : '']"
   >
-    <input class="check" type="checkbox" v-model="todoList.done" @change="handleChange">
-    <label>{{ todoList.value }}</label>
-    <button class="delete" @click="handleDelete(index)"></button>
+    <input class="check" type="checkbox" v-model="todoItem.done" @change="handleChange">
+    <label>{{ todoItem.value }}</label>
+    <button class="delete" @click="handleDelete"></button>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    todoList: {
+    todoItem: {
       type: Object,
       required: true
     },
     index: Number
   },
-  data() {
-    return {
-      id: this.todoList.id,
-      done: this.todoList.done
-    }
-  },
   methods: {
-    handleDelete(index) {
-      this.$emit('delete', index)
+    handleDelete() {
+      this.$emit('delete', this.index)
     },
-    handleChange() {
-      this.todoList.done ? this.done = 1 : this.done = 0
-      this.$emit('handleChange', this.id, this.done)      
+    handleChange() {  // 任务完成状态切换时及时告诉后端修改数据库中对应的done字段
+      this.todoItem.done = this.todoItem.done ? 1 : 0
+      this.$emit('handleChange', this.todoItem.id, this.todoItem.done)      
     },
   },
 }

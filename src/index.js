@@ -3,7 +3,7 @@ import App from './app.vue'
 import '../src/assets/styles/global.scss'
 import axios from 'axios'
 import router from './router/router.js'
-require('../mock')
+// require('../mock')
 import { Message } from 'element-ui'
 
 Vue.use(Message)
