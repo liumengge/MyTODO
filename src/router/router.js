@@ -12,25 +12,5 @@ export default new Router({
       name: 'Todo',
       component: Todo
     },
-    // {
-    //   path: '/addTodoList',
-    //   name: 'addTodoList',
-    //   component: TodoList
-    // },
-    // {
-    //   path: '/needTodo',
-    //   name: 'needTodo',
-    //   component: TodoList
-    // },
-    // {
-    //   path: '/done',
-    //   name: 'done',
-    //   component: TodoList
-    // },
-    // {
-    //   path: '/delete',
-    //   name: 'delete',
-    //   component: TodoList
-    // }
   ]
 })

@@ -13,7 +13,6 @@
         v-for="(item) in todoLists"
         :key="item.id"
         :todoItem="item" 
-        :index="item.id"
         @handleChange="handleChange(arguments)"
         @delete="deleteTodoItem"
       ></todo-item>

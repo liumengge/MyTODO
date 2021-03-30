@@ -1,6 +1,8 @@
 <template>
   <div class="tabs-box">
+    <!-- 剩余任务数 -->
     <span class="unReached">{{ unReachedNum }} items left</span>
+    <!-- 状态切换区域 -->
     <span class="tabs">
       <span
         v-for="state in states"
@@ -9,6 +11,7 @@
         @click="handleShow(state)"
       >{{ state }}</span>
     </span>
+    <!-- 删除所有已完成项按钮 -->
     <span class="delete" @click="handleDeleteCompleted">Delete completed items</span>
   </div>
 </template>
@@ -31,6 +34,7 @@ export default {
     }
   },
   computed: {
+    // 计算属性：获取当前剩余任务数
     unReachedNum() {
       return this.todoLists.filter(todoItem => !Number(todoItem.done)).length
     }

@@ -11,15 +11,14 @@
 <script>
 export default {
   props: {
-    todoItem: {
+    todoItem: {  // 父组件传递过来的任务项
       type: Object,
       required: true
     },
-    index: Number
   },
   methods: {
     handleDelete() {
-      this.$emit('delete', this.index)
+      this.$emit('delete', this.todoItem.id)
     },
     handleChange() {  // 任务完成状态切换时及时告诉后端修改数据库中对应的done字段
       this.todoItem.done = this.todoItem.done ? 1 : 0

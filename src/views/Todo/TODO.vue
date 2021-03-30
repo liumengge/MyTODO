@@ -1,7 +1,9 @@
 <template>
   <div class="todo">
     <Header></Header>
+    <!-- todo组件 -->
     <Todo-Main></Todo-Main>
+    <!-- 脚注 -->
     <Footer></Footer>
   </div>
 </template>

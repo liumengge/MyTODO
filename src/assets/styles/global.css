@@ -5,6 +5,7 @@ html, body {
   height: 100%;
 }
 
+/* 设置背景 */
 body {
   background-image: url("../images/pic-F.jpg");
   background-size: cover;
